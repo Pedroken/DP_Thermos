@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diag Prime - Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #FF6B00;
+      --accent: #FF9500;
+      --background: #0F172A;
+      --card-bg: linear-gradient(145deg, #1E293B 0%, #1A2535 100%);
+      --text: #F8FAFC;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --icon-color: #FFD500;
+      --border-gradient: linear-gradient(90deg, var(--primary), var(--accent));
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .dashboard-footer .assinatura {
+  font-size: 0.6rem; 
+}
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      padding: 1.5rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-height: 120px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .dashboard-header.shrink {
+      padding: 0.8rem 2rem;
+      max-height: 70px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      backdrop-filter: blur(12px);
+    }
+
+    .dashboard-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-align: center;
+      transition: all 0.4s ease;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-title span {
+      font-size: 0.85rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      display: block;
+      margin-top: 0.3rem;
+    }
+
+    .dashboard-header.shrink .dashboard-title {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+
+    .title-icon {
+  width: 80px !important;  /* Tamanho aumentado */
+  height: 80px !important;
+  margin-top: 0.8rem;
+  fill: var(--icon-color);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transform-origin: center bottom;
+  animation: pulse 2s infinite; /* Opcional - efeito de pulsar para verificar se está aplicado */
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.dashboard-header.shrink .title-icon {
+  transform: scale(1.5) translateY(5px) !important;
+  animation: none; /* Remove animação quando encolhido */
+}
+
+/* FORÇAR REDIMENSIONAMENTO DO SVG */
+.title-icon svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.title-icon path {
+  transform: scale(1.8); /* Aumenta o desenho interno */
+  transform-origin: center;
+  stroke-width: 1.5; /* Deixa mais grosso */
+}
+
+    .dashboard-header.shrink .title-icon {
+        transform: scale(1.8) translateY(8px); /* Aumento mais agressivo no scale */
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      padding: 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .metric-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 0;
+      margin: 0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-top: 10px;
+
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--border-gradient);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-title {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      position: relative;
+      padding-bottom: 0.5rem;
+      text-align: center;
+      margin-top: 15px;
+
+    }
+
+    .card-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: var(--border-gradient);
+    }
+
+    .days-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      justify-content: center;
+
+    }
+
+    .days-select {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text);
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(4px);
+      width: auto;
+      text-align: center;
+      text-align-last: center;
+    }
+
+    .days-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+    }
+
+    .days-ok {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      color: var(--text);
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .days-ok:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+    }
+
+    .chart-wrapper {
+      width: 100%;
+      height: fit-content;
+      border-radius: 14px;
+      overflow: hidden;
+      margin: 0 rem 0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .widget-wrapper {
+      width: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .dashboard-footer {
+      text-align: center;
+      padding: 2rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.9rem;
+      margin-top: 3rem;
+      position: relative;
+    }
+
+    .dashboard-footer::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--border-gradient);
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-grid {
+        padding: 0.5rem;
+        gap: 1.5rem;
+      }
+
+      .dashboard-title {
+        font-size: 1.8rem;
+      }
+
+      .card-title {
+        font-size: 1.4rem;
+      }
+
+      .chart-wrapper {
+        height: 350px;
+        margin: 1rem 0 0;
+      border: none;
+      height: 450px;
+      background: transparent;
+      }
+
+      .days-control {
+        flex-direction: column;
+      }
+
+      .days-select, .days-ok {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .dashboard-header {
+        padding: 1rem;
+      }
+
+      .dashboard-title {
+        font-size: 1.6rem;
+      }
+
+      .metric-card {
+        padding: 0.3 rem;
+      }
+
+      .chart-wrapper {
+        height: 300px;
+        margin: 1rem 0;
+      }
+    }
+
+
+
+    @media (min-width: 1024px) {
+  .chart-wrapper {
+    height: 600px; /* ajuste este valor conforme necessário */
+  }
+}
+
+
+    
+  </style>
+</head>
+<body>
+  <!-- O restante do HTML permanece exatamente o mesmo -->
+  <header class="dashboard-header">
+    <h1 class="dashboard-title">
+      DIAG PRIME<br>
+      <span>MONITORAMENTO</span>
+    </h1>
+  <!--    <svg class="title-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0"/>
+      </svg>-->
+    
+  </header>
+
+  <main>
+    <div class="dashboard-grid">
+      <!-- Dispositivo 001 - Freezer -->
+      <article class="metric-card">
+        <div class="card-header">
+          <h2 class="card-title">DISPOSITIVO 001 - FREEZER</h2>
+          <div class="days-control">
+            <select class="days-select">
+              <option value="3">3 dias</option>
+              <option value="15">15 dias</option>
+              <option value="30">30 dias</option>
+              <option value="60">60 dias</option>
+              <option value="90">90 dias</option>
+              <option value="180">180 dias</option>
+              <option value="365">365 dias</option>
+            </select>
+            <button class="days-ok">OK</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <iframe class="chart-iframe" src="https://thingspeak.mathworks.com/channels/536120/charts/1?width=auto&height=auto&bgcolor=%23ffffff&color=%23d62020&dynamic=true&days=3&title=DISPOSITIVO+001+-+FREEZER&type=line"></iframe>
+        </div>
+        <div class="widget-wrapper">
+          <iframe class="widget-iframe" src="https://thingspeak.mathworks.com/channels/536120/widgets/80093"></iframe>
+        </div>
+      </article>
+
+      <!-- Dispositivo 002 - Câmara Fria -->
+      <article class="metric-card">
+        <div class="card-header">
+          <h2 class="card-title">DISPOSITIVO 002 - CAMARA</h2>
+          <div class="days-control">
+            <select class="days-select">
+              <option value="3">3 dias</option>
+              <option value="15">15 dias</option>
+              <option value="30">30 dias</option>
+              <option value="60">60 dias</option>
+              <option value="90">90 dias</option>
+              <option value="180">180 dias</option>
+              <option value="365">365 dias</option>
+            </select>
+            <button class="days-ok">OK</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <iframe class="chart-iframe" src="https://thingspeak.mathworks.com/channels/324993/charts/1?width=auto&height=auto&bgcolor=%23ffffff&color=%23d62020&dynamic=true&days=3&title=DISPOSITIVO+002+-+CAMARA+FRIA&type=line"></iframe>
+        </div>
+        <div class="widget-wrapper">
+          <iframe class="widget-iframe" src="https://thingspeak.mathworks.com/channels/324993/widgets/86963"></iframe>
+        </div>
+      </article>
+
+      <!-- Dispositivo 003 - Estoque -->
+      <article class="metric-card">
+        <div class="card-header">
+          <h2 class="card-title">DISPOSITIVO 003 - ESTOQUE</h2>
+          <div class="days-control">
+            <select class="days-select">
+              <option value="3">3 dias</option>
+              <option value="15">15 dias</option>
+              <option value="30">30 dias</option>
+              <option value="60">60 dias</option>
+              <option value="90">90 dias</option>
+              <option value="180">180 dias</option>
+              <option value="365">365 dias</option>
+            </select>
+            <button class="days-ok">OK</button>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <iframe class="chart-iframe" src="https://thingspeak.mathworks.com/channels/311420/charts/1?width=auto&height=auto&bgcolor=%23ffffff&color=%23b03d6b&dynamic=true&days=3&type=spline"></iframe>
+        </div>
+        <div class="widget-wrapper">
+          <iframe class="widget-iframe" src="https://thingspeak.mathworks.com/channels/311420/widgets/87272"></iframe>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="dashboard-footer">
+    <p>• Diag Prime •</p>
+    <p>• Sistema de monitoramento integrado •</p>
+    <p class="assinatura">Desenvolvido por Pedro Mōri</p>
+    <p class="assinatura">pkmori@icloud.com</p>
+    <p class="assinatura">2025</p>
+  </footer>
+
+  <script>
+    // JavaScript permanece exatamente o mesmo
+    function updateCharts(context) {
+      const elements = context ? [context.closest('.metric-card')] : document.querySelectorAll('.metric-card');
+      elements.forEach(card => {
+        const iframe = card.querySelector('.chart-iframe');
+        const select = card.querySelector('.days-select');
+        const newUrl = new URL(iframe.src);
+        newUrl.searchParams.set('days', select.value);
+        newUrl.searchParams.delete('results');
+        iframe.src = newUrl.toString();
+      });
+    }
+
+    document.querySelectorAll('.days-select').forEach(select => {
+      select.addEventListener('change', () => updateCharts(select));
+    });
+
+    document.querySelectorAll('.days-ok').forEach(button => {
+      button.addEventListener('click', () => updateCharts(button));
+    });
+
+    document.querySelectorAll('.days-select').forEach(select => {
+      select.value = '3';
+    });
+    updateCharts();
+
+    window.addEventListener('scroll', function() {
+      const header = document.querySelector('.dashboard-header');
+      header.classList.toggle('shrink', window.scrollY > 50);
+    });
+  </script>
+</body>
+</html>
